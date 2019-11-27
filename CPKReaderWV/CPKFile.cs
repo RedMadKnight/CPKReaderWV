@@ -11,7 +11,7 @@ namespace CPKReaderWV
     {
         public struct HeaderStruct 
         {
-            public uint MagicNumber; //always CPK_MAGIC_NUMBER = A1B2C3D4 
+            public uint MagicNumber; 
             public uint PackageVersion;
             public ulong DecompressedFileSize;
             public uint Flags;
@@ -25,11 +25,12 @@ namespace CPKReaderWV
             public uint CompSectorToDecomOffsetBitCount;
             public uint DecompSectorToCompSectorBitCount;
             public uint CRC;
+            public uint Unknown;
             public int ReadSectorSize;
             public int CompSectorSize;
 
         }
-        public struct FileInfo //sizeof = 0x18 , align = 0x8 => HashTable info
+        public struct FileInfo 
         {
             public ulong dwHash;
             public uint nSize;
@@ -47,10 +48,7 @@ namespace CPKReaderWV
         public uint HeaderSize;
         public uint HeaderReadSectorCount;
         public uint CompSectorCount;
-        //version 6
-        //nCurrentReadOffset = 64; 
-        //version 7
-        //nCurrentReadOffset = 72; 
+
 
 
         public FileStream OpenCPKFile(string Path)
@@ -107,14 +105,16 @@ namespace CPKReaderWV
             Header.CRC = help.RUInt32(s, Reverse);
             if (Header.PackageVersion == 6)
             {
-                CurrentReadOffset = help.ReadU32(s); //always 0
+                Header.Unknown = help.ReadU32(s); //always 0
                 Header.ReadSectorSize = 0x10000;
                 Header.CompSectorSize = 0x4000;
+                CurrentReadOffset = 64; 
             }
             if (Header.PackageVersion == 7)
             {
                 Header.ReadSectorSize = help.RInt32(o, Reverse);
                 Header.CompSectorSize = help.RInt32(o, Reverse);
+                CurrentReadOffset = 72;
             }
             CloseCPKFile(o);
             return Header;
