@@ -35,12 +35,12 @@ namespace CPKReaderWV
         private void RefreshAll()
         {
             rtb1.Text = cpk.PrintHeader();
-            rtb2.Text = cpk.PrintFileInfoBlock();
-            rtb3.Text = cpk.PrintLocationBlock();
-            rtb4.Text = cpk.PrintBlock3();
+            rtb2.Text = cpk.Print_SortedFileInfo();
+            rtb3.Text = cpk.Print_Locations();
+            rtb4.Text = cpk.Print_CompressedSectorToDecompressedSector();
             
             hb3.ByteProvider = new DynamicByteProvider(cpk.block4);
-            rtb5.Text = cpk.PrintBlock5();
+            rtb5.Text = cpk.Print_FileNameArrayOffsets();
             listBox2.Items.Clear();
 
             for(int x=0;x<cpk.header.FileCount;x++)

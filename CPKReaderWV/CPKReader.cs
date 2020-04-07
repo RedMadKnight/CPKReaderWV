@@ -36,11 +36,11 @@ namespace CPKReaderWV
             fileSize = (uint)fs.Position;
             fs.Seek(0, 0);
             ReadHeader(fs);
-            FileInfoBlock(fs);
-            ReadLocationBlock(fs);
-            ReadBlock3(fs);
-            ReadBlock4(fs);
-            ReadBlock5(fs);
+            SortedFileInfo(fs);
+            Locations(fs);
+            CompressedSectorToDecompressedSector(fs);
+            DecompressedSectorToCompressedSector(fs);
+            FileNameArrayOffsets(fs);
             ReadFileNames(fs);
             ReadFiles(fs);
             fs.Close();
@@ -121,7 +121,7 @@ namespace CPKReaderWV
             return sb.ToString();
         }
 
-        public void FileInfoBlock(Stream s)
+        public void SortedFileInfo(Stream s)
         {
             uint size = 64;
             size += header.FileSizeBitCount;
@@ -134,7 +134,7 @@ namespace CPKReaderWV
             s.Read(BFileInfo, 0, (int)size);
         }
 
-        public string PrintFileInfoBlock()
+        public string Print_SortedFileInfo()
         {
             fileinfo = new CPKFile.FileInfo[header.FileCount];
             StringBuilder sb = new StringBuilder();
@@ -160,7 +160,7 @@ namespace CPKReaderWV
             return sb.ToString();
         }
 
-        public void ReadLocationBlock(Stream s)
+        public void Locations(Stream s)
         {
             uint size = header.LocationBitCount * header.LocationCount;
             size += 7;
@@ -169,7 +169,7 @@ namespace CPKReaderWV
             s.Read(block2, 0, (int)size);
         }
 
-        public string PrintLocationBlock()
+        public string Print_Locations()
         {
             StringBuilder sb = new StringBuilder();
             uint pos = 0;
@@ -184,7 +184,7 @@ namespace CPKReaderWV
             return sb.ToString();
         }
 
-        public void ReadBlock3(Stream s)
+        public void CompressedSectorToDecompressedSector(Stream s)
         {
            uint size = cpkfile.CompSectorCount * header.LocationBitCount;
             size += 7;
@@ -193,7 +193,7 @@ namespace CPKReaderWV
             s.Read(block3, 0, (int)size);
         }
 
-        public string PrintBlock3()
+        public string Print_CompressedSectorToDecompressedSector()
         {
             StringBuilder sb = new StringBuilder();
             uint pos = 0;
@@ -208,7 +208,7 @@ namespace CPKReaderWV
             return sb.ToString();
         }
 
-        public void ReadBlock4(Stream s)
+        public void DecompressedSectorToCompressedSector(Stream s)
         {
             uint size = help.GetHighestBit(cpkfile.CompSectorCount) * (((uint)header.DecompressedFileSize + (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE - 1) / (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE);
             size += 7;
@@ -217,14 +217,14 @@ namespace CPKReaderWV
             s.Read(block4, 0, (int)size);
         }
 
-        public void ReadBlock5(Stream s)
+        public void FileNameArrayOffsets(Stream s)
         {
             block5 = new uint[header.FileCount];
             for (int i = 0; i < header.FileCount; i++)
                 block5[i] = help.ReadU32(s);
         }
 
-        public string PrintBlock5()
+        public string Print_FileNameArrayOffsets()
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < header.FileCount; i++)

@@ -96,14 +96,14 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveBlobToolStripMenuItem1
             // 
             this.saveBlobToolStripMenuItem1.Name = "saveBlobToolStripMenuItem1";
-            this.saveBlobToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.saveBlobToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.saveBlobToolStripMenuItem1.Text = "Exit";
             this.saveBlobToolStripMenuItem1.Click += new System.EventHandler(this.saveBlobToolStripMenuItem1_Click);
             // 
@@ -155,7 +155,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(631, 394);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "FileInfo";
+            this.tabPage2.Text = "SortedFileInfo";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // rtb2
@@ -178,7 +178,7 @@
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(631, 394);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Location";
+            this.tabPage3.Text = "Locations";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // rtb3
@@ -201,7 +201,7 @@
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(631, 394);
             this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Block 3";
+            this.tabPage4.Text = "CompressedSectorToDecompressedOffset";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // rtb4
@@ -224,7 +224,7 @@
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage5.Size = new System.Drawing.Size(631, 394);
             this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Block 4";
+            this.tabPage5.Text = "DecompressedSectorToCompressedSector";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // hb3
@@ -252,7 +252,7 @@
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage6.Size = new System.Drawing.Size(631, 394);
             this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Block 5";
+            this.tabPage6.Text = "FileNameArrayOffsets";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
             // rtb5
