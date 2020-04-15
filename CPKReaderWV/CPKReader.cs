@@ -67,9 +67,20 @@ namespace CPKReaderWV
                 fileOffsets.Add(pos, SectorSize);
                 s.Seek(SectorSize, SeekOrigin.Current);
             }
-            Console.WriteLine(help.ReadU8(s) + " => " + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s));
-            Console.WriteLine(help.ReadU8(s) + " => " + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s));
-            Console.WriteLine(help.ReadU8(s) + " => " + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s));
+            pos = 0x14000;
+            s.Seek(pos, 0);
+            ushort BitCountInRecord1 = help.ReadU16(s); //2-bytes
+            ushort flag1 = help.ReadU16(s); //2-bytes
+            ushort SectorSize1 = help.ReadU16(s); //2-bytes
+            Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord1 + " => " + flag1 + " =>" + SectorSize1);
+            fileOffsets.Add(pos, SectorSize1);
+            s.Seek(SectorSize1, SeekOrigin.Current);
+            pos = (uint)s.Position;
+            BitCountInRecord1 = help.ReadU16(s); //2-bytes
+            flag1 = help.ReadU16(s); //2-bytes
+            SectorSize1 = help.ReadU16(s); //2-bytes
+            Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord1 + " => " + flag1 + " =>" + SectorSize1);
+            fileOffsets.Add(pos, SectorSize1);
         }
 
         public void ReadHeader(Stream s)
@@ -144,7 +155,7 @@ namespace CPKReaderWV
             uint pos = 0; 
             for (int i = 0; i < header.FileCount; i++)
             {
-                sb.Append((i+1).ToString("d6") + " : ");
+                sb.Append((i).ToString("d6") + " : ");
                 ulong u1 = help.ReadBits(BFileInfo, pos, 64);
                 fileinfo[i].dwHash = u1;
                 pos += 64;
@@ -177,12 +188,13 @@ namespace CPKReaderWV
         {
             StringBuilder sb = new StringBuilder();
             uint pos = 0;
-            for (int i = 1; i < header.LocationCount+1; i++)
+            sb.AppendLine("Index => Offset(dec) => Offset(hex) ");
+            for (int i = 0; i < header.LocationCount; i++)
             {
-                sb.Append((i).ToString("d6") + " : ");
+                sb.Append((i).ToString("d4") + " : ");
                 ulong u1 = help.ReadBits(block2, pos, header.LocationBitCount);
                 pos += header.LocationBitCount;
-                sb.Append(u1.ToString("d6"));
+                sb.Append(u1.ToString("d8") + " : " + u1.ToString("X8"));
                 sb.AppendLine();
             }
             return sb.ToString();
@@ -203,7 +215,7 @@ namespace CPKReaderWV
             uint pos = 0;
             for (int i = 0; i < cpkfile.CompSectorCount; i++)
             {
-                sb.Append((i+1).ToString("d6") + " : ");
+                sb.Append((i).ToString("d6") + " : ");
                 ulong u1 = help.ReadBits(block3, pos, header.LocationBitCount);
                 pos += header.LocationBitCount;
                 sb.Append("0x" + u1.ToString("X8"));
@@ -229,7 +241,7 @@ namespace CPKReaderWV
             uint pos = 0;
             for (int i = 0; i < sizet; i++)
             {
-                sb.Append((i + 1).ToString("d6") + " : ");
+                sb.Append((i).ToString("d6") + " : ");
                 ulong u1 = help.ReadBits(block4, pos, help.GetHighestBit(cpkfile.CompSectorCount));
                 pos += help.GetHighestBit(cpkfile.CompSectorCount);
                 sb.Append(u1.ToString("d6"));
@@ -249,7 +261,7 @@ namespace CPKReaderWV
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < header.FileCount; i++)
-                sb.AppendLine((i+1).ToString("d6") + ": 0x" + block5[i].ToString("X8"));
+                sb.AppendLine((i).ToString("d6") + ": 0x" + block5[i].ToString("X8"));
             return sb.ToString();
         }
 
