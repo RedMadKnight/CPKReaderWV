@@ -68,6 +68,11 @@ namespace CPKReaderWV
             return result;
         }
 
+        public byte ReadU8(Stream s)
+        {
+            return (byte)s.ReadByte();
+        }
+
         public ushort ReadU16(Stream s)
         {
             ushort res = 0;

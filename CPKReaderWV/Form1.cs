@@ -38,8 +38,8 @@ namespace CPKReaderWV
             rtb2.Text = cpk.Print_SortedFileInfo();
             rtb3.Text = cpk.Print_Locations();
             rtb4.Text = cpk.Print_CompressedSectorToDecompressedSector();
-            
-            hb3.ByteProvider = new DynamicByteProvider(cpk.block4);
+
+            rbtd.Text = cpk.Print_DecompressedSectorToCompressedSector();
             rtb5.Text = cpk.Print_FileNameArrayOffsets();
             listBox2.Items.Clear();
 
@@ -49,7 +49,7 @@ namespace CPKReaderWV
             int count = 0;
             foreach (KeyValuePair<uint, uint> pair in cpk.fileOffsets)
                 listBox3.Items.Add((count++) + ": Offset=0x" + pair.Key.ToString("X8") + " Size=0x" + pair.Value.ToString("X8"));
-            //files are cut in blocks, after some FF FF FF FF goes 11-bit something, then goes the file and then unused FF-bits again
+    
         }
 
         private void listBox3_SelectedIndexChanged(object sender, EventArgs e)

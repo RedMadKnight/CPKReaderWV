@@ -43,7 +43,6 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.rtb4 = new System.Windows.Forms.RichTextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.hb3 = new Be.Windows.Forms.HexBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.rtb5 = new System.Windows.Forms.RichTextBox();
             this.tabPage7 = new System.Windows.Forms.TabPage();
@@ -51,11 +50,12 @@
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listBox3 = new System.Windows.Forms.ListBox();
-            this.hb1 = new Be.Windows.Forms.HexBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.saveBlobToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rbtd = new System.Windows.Forms.RichTextBox();
+            this.hb1 = new Be.Windows.Forms.HexBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -218,7 +218,7 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.hb3);
+            this.tabPage5.Controls.Add(this.rbtd);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
@@ -226,23 +226,6 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "DecompressedSectorToCompressedSector";
             this.tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // hb3
-            // 
-            this.hb3.BoldFont = null;
-            this.hb3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hb3.Font = new System.Drawing.Font("Consolas", 8.25F);
-            this.hb3.LineInfoForeColor = System.Drawing.Color.Empty;
-            this.hb3.LineInfoVisible = true;
-            this.hb3.Location = new System.Drawing.Point(3, 3);
-            this.hb3.Name = "hb3";
-            this.hb3.ReadOnly = true;
-            this.hb3.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.hb3.Size = new System.Drawing.Size(625, 388);
-            this.hb3.StringViewVisible = true;
-            this.hb3.TabIndex = 3;
-            this.hb3.UseFixedBytesPerLine = true;
-            this.hb3.VScrollBarVisible = true;
             // 
             // tabPage6
             // 
@@ -329,23 +312,6 @@
             this.listBox3.TabIndex = 4;
             this.listBox3.SelectedIndexChanged += new System.EventHandler(this.listBox3_SelectedIndexChanged);
             // 
-            // hb1
-            // 
-            this.hb1.BoldFont = null;
-            this.hb1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hb1.Font = new System.Drawing.Font("Consolas", 8.25F);
-            this.hb1.LineInfoForeColor = System.Drawing.Color.Empty;
-            this.hb1.LineInfoVisible = true;
-            this.hb1.Location = new System.Drawing.Point(0, 0);
-            this.hb1.Name = "hb1";
-            this.hb1.ReadOnly = true;
-            this.hb1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.hb1.Size = new System.Drawing.Size(356, 388);
-            this.hb1.StringViewVisible = true;
-            this.hb1.TabIndex = 4;
-            this.hb1.UseFixedBytesPerLine = true;
-            this.hb1.VScrollBarVisible = true;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -372,6 +338,35 @@
             // 
             this.saveBlobToolStripMenuItem.Name = "saveBlobToolStripMenuItem";
             this.saveBlobToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // rbtd
+            // 
+            this.rbtd.DetectUrls = false;
+            this.rbtd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rbtd.Font = new System.Drawing.Font("Consolas", 8.25F);
+            this.rbtd.Location = new System.Drawing.Point(3, 3);
+            this.rbtd.Name = "rbtd";
+            this.rbtd.Size = new System.Drawing.Size(625, 388);
+            this.rbtd.TabIndex = 5;
+            this.rbtd.Text = "";
+            this.rbtd.WordWrap = false;
+            // 
+            // hb1
+            // 
+            this.hb1.BoldFont = null;
+            this.hb1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hb1.Font = new System.Drawing.Font("Consolas", 8.25F);
+            this.hb1.LineInfoForeColor = System.Drawing.Color.Empty;
+            this.hb1.LineInfoVisible = true;
+            this.hb1.Location = new System.Drawing.Point(0, 0);
+            this.hb1.Name = "hb1";
+            this.hb1.ReadOnly = true;
+            this.hb1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.hb1.Size = new System.Drawing.Size(356, 388);
+            this.hb1.StringViewVisible = true;
+            this.hb1.TabIndex = 4;
+            this.hb1.UseFixedBytesPerLine = true;
+            this.hb1.VScrollBarVisible = true;
             // 
             // Form1
             // 
@@ -421,7 +416,6 @@
         private System.Windows.Forms.ToolStripStatusLabel status;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
-        private Be.Windows.Forms.HexBox hb3;
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.TabPage tabPage7;
         private System.Windows.Forms.ListBox listBox2;
@@ -436,6 +430,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem saveBlobToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveBlobToolStripMenuItem1;
+        private System.Windows.Forms.RichTextBox rbtd;
     }
 }
 

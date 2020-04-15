@@ -42,11 +42,11 @@ namespace CPKReaderWV
             DecompressedSectorToCompressedSector(fs);
             FileNameArrayOffsets(fs);
             ReadFileNames(fs);
-            ReadFiles(fs);
+            ReadSectors(fs);
             fs.Close();
         }
 
-        public void ReadFiles(Stream s)
+        public void ReadSectors(Stream s)
         {
             Console.WriteLine(header.FileCount);
             uint pos = (uint)s.Position & 0xFFFF0000;
@@ -61,12 +61,15 @@ namespace CPKReaderWV
                 pos = (uint)s.Position;
                 ushort BitCountInRecord = help.ReadU16(s); //2-bytes
                 ushort flag = help.ReadU16(s); //2-bytes
-                ushort record_size = help.ReadU16(s); //2-bytes
-                if (record_size == 8 || BitCountInRecord == 0) break;
-                Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord + " => " + flag + " =>" + record_size);
-                fileOffsets.Add(pos, record_size);
-                s.Seek(record_size, SeekOrigin.Current);
+                ushort SectorSize = help.ReadU16(s); //2-bytes
+                if (SectorSize == 8 || BitCountInRecord == 0) break;
+                Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord + " => " + flag + " =>" + SectorSize);
+                fileOffsets.Add(pos, SectorSize);
+                s.Seek(SectorSize, SeekOrigin.Current);
             }
+            Console.WriteLine(help.ReadU8(s) + " => " + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s));
+            Console.WriteLine(help.ReadU8(s) + " => " + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s));
+            Console.WriteLine(help.ReadU8(s) + " => " + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s) + " =>" + help.ReadU8(s));
         }
 
         public void ReadHeader(Stream s)
@@ -129,7 +132,7 @@ namespace CPKReaderWV
             size += header.FileLocationIndexBitCount;
             size *= header.FileCount;
             size += 7;
-            size = size >> 3;
+            size /= 8;
             BFileInfo = new byte[size];
             s.Read(BFileInfo, 0, (int)size);
         }
@@ -169,16 +172,17 @@ namespace CPKReaderWV
             s.Read(block2, 0, (int)size);
         }
 
+        //TODO - must sort locations!
         public string Print_Locations()
         {
             StringBuilder sb = new StringBuilder();
             uint pos = 0;
-            for (int i = 0; i < header.LocationCount; i++)
+            for (int i = 1; i < header.LocationCount+1; i++)
             {
                 sb.Append((i).ToString("d6") + " : ");
                 ulong u1 = help.ReadBits(block2, pos, header.LocationBitCount);
                 pos += header.LocationBitCount;
-                sb.Append("0x" + u1.ToString("X8"));
+                sb.Append(u1.ToString("d6"));
                 sb.AppendLine();
             }
             return sb.ToString();
@@ -215,6 +219,23 @@ namespace CPKReaderWV
             size /= 8;
             block4 = new byte[size];
             s.Read(block4, 0, (int)size);
+        }
+
+
+        public string Print_DecompressedSectorToCompressedSector()
+        {
+            StringBuilder sb = new StringBuilder();
+            uint sizet = (((uint)header.DecompressedFileSize + (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE - 1) / (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE);
+            uint pos = 0;
+            for (int i = 0; i < sizet; i++)
+            {
+                sb.Append((i + 1).ToString("d6") + " : ");
+                ulong u1 = help.ReadBits(block4, pos, help.GetHighestBit(cpkfile.CompSectorCount));
+                pos += help.GetHighestBit(cpkfile.CompSectorCount);
+                sb.Append(u1.ToString("d6"));
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
 
         public void FileNameArrayOffsets(Stream s)
