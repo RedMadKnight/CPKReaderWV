@@ -52,6 +52,7 @@ namespace CPKReaderWV
             uint pos = (uint)s.Position & 0xFFFF0000;
             if ((s.Position % 0x10000) != 0)
                pos += 0x10000;
+            uint next_sector = pos+0x4000;
             fileOffsets = new Dictionary<uint, uint>();
             s.Seek(pos, 0);
             //skip first empty record
@@ -59,28 +60,23 @@ namespace CPKReaderWV
             while (true)
             {
                 pos = (uint)s.Position;
-                ushort BitCountInRecord = help.ReadU16(s); //2-bytes
-                ushort flag = help.ReadU16(s); //2-bytes
-                ushort SectorSize = help.ReadU16(s); //2-bytes
-                if (SectorSize == 8 || BitCountInRecord == 0) break;
-                Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord + " => " + flag + " =>" + SectorSize);
+                if(pos+0xf > next_sector)
+                    {
+                    pos = next_sector;
+                    next_sector += 0x4000;
+                    s.Seek(pos, 0);
+                    if (next_sector > s.Length)
+                        break;
+                }
+                ushort BitCountInRecord = help.ReadU16(s); 
+                ushort flag = help.ReadU16(s); 
+                ushort SectorSize = help.ReadU16(s);
+                if (SectorSize == 0)
+                    break;
+                //Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord + " => " + flag + " =>" + SectorSize);
                 fileOffsets.Add(pos, SectorSize);
                 s.Seek(SectorSize, SeekOrigin.Current);
             }
-            pos = 0x14000;
-            s.Seek(pos, 0);
-            ushort BitCountInRecord1 = help.ReadU16(s); //2-bytes
-            ushort flag1 = help.ReadU16(s); //2-bytes
-            ushort SectorSize1 = help.ReadU16(s); //2-bytes
-            Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord1 + " => " + flag1 + " =>" + SectorSize1);
-            fileOffsets.Add(pos, SectorSize1);
-            s.Seek(SectorSize1, SeekOrigin.Current);
-            pos = (uint)s.Position;
-            BitCountInRecord1 = help.ReadU16(s); //2-bytes
-            flag1 = help.ReadU16(s); //2-bytes
-            SectorSize1 = help.ReadU16(s); //2-bytes
-            Console.WriteLine("Position : " + pos.ToString("X8") + " => " + BitCountInRecord1 + " => " + flag1 + " =>" + SectorSize1);
-            fileOffsets.Add(pos, SectorSize1);
         }
 
         public void ReadHeader(Stream s)
