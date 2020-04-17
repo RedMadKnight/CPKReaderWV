@@ -44,7 +44,7 @@ namespace CPKReaderWV
             listBox2.Items.Clear();
 
             for(int x=0;x<cpk.header.FileCount;x++)
-                listBox2.Items.Add((x+1).ToString("d6") + ": Hash : "+ cpk.fileHash[x] +" => "+ cpk.fileNames[x]);
+                listBox2.Items.Add("Location index: "+(x).ToString("d6") + ": Hash : "+ cpk.fileHash[x] +" => "+ cpk.fileNames[x]);
             listBox3.Items.Clear();
             int count = 0;
             foreach (KeyValuePair<uint, uint> pair in cpk.fileOffsets)
@@ -59,7 +59,7 @@ namespace CPKReaderWV
             KeyValuePair<uint, uint> pair = cpk.fileOffsets.ToArray()[n];
             cpk.cpkpath = tempapath;
             FileStream fs = new FileStream(cpk.cpkpath, FileMode.Open, FileAccess.Read);
-            fs.Seek(pair.Key + 6, 0); //6 = 3 * 2-bytes <= must correct, not true if filecount <> LocationCount
+            fs.Seek(pair.Key + 6, 0); 
             byte[] buff = new byte[pair.Value];
             fs.Read(buff, 0, (int)pair.Value);
             fs.Close();

@@ -39,9 +39,16 @@ namespace CPKReaderWV
             public uint nLocationIndexOverride;
         }
 
+        public struct Locations
+        {
+            public uint index;
+            public ulong offset;
+        }
+
         public string CPKFilePath;
         public HeaderStruct Header;
         public FileInfo[] HashTable;
+        public Locations[] LocationTable;
         public helper help;
         public int Reverse = -1;
         public uint CurrentReadOffset = 64;

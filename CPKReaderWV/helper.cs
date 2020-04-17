@@ -268,26 +268,18 @@ namespace CPKReaderWV
 
         public ulong Hash64(string name)
         {
-            char[] v1 = name.ToCharArray();
+            var bytes = Encoding.ASCII.GetBytes(name);
             ulong result = 0xCBF29CE484222325L;
-            int strlen = name.Length;
-            if (strlen > 0)
-            {
-                for (int i = 0; i < strlen; i++)
-                    result = 0x100000001B3L * (result ^ v1[i]);
-            }
+            for (int i = 0; i < name.Length; i++)
+                result = 0x100000001B3L * (result ^ bytes[i]);
             return result;
         }
 
-        public ulong Hash64More(string data, ulong previousHash)
+        public ulong Hash64More(string name, ulong previousHash)
         {
-            char[] v1 = data.ToCharArray();
-            int strlen = data.Length;
-            if (strlen > 0)
-            {
-                for (int i = 0; i < strlen; i++)
-                    previousHash = 0x100000001B3L * (v1[i] ^ previousHash);
-            }
+            var bytes = Encoding.ASCII.GetBytes(name);
+            for (int i = 0; i < name.Length; i++)
+                previousHash = 0x100000001B3L * (bytes[i] ^ previousHash);
             return previousHash;
         }
 
