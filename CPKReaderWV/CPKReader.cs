@@ -16,7 +16,6 @@ namespace CPKReaderWV
         public uint fileSize;
         public CPKFile.HeaderStruct header;
         public CPKFile.FileInfo[] fileinfo;
-        public CPKFile.Locations[] locationtable;
         public byte[] BFileInfo;
         public byte[] block2;
         public byte[] block3;
@@ -52,6 +51,7 @@ namespace CPKReaderWV
             uint pos = (uint)s.Position & 0xFFFF0000;
             if ((s.Position % 0x10000) != 0)
                pos += 0x10000;
+            uint sector = 1;
             uint next_sector = pos+0x4000;
             fileOffsets = new Dictionary<uint, uint>();
             s.Seek(pos, 0);
@@ -62,9 +62,11 @@ namespace CPKReaderWV
                 pos = (uint)s.Position;
                 if(pos+0xf > next_sector)
                     {
+                    Console.WriteLine("Sector : "+sector);
                     pos = next_sector;
                     next_sector += 0x4000;
                     s.Seek(pos, 0);
+                    sector++;
                     if (next_sector > s.Length)
                         break;
                 }

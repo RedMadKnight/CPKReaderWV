@@ -12,6 +12,7 @@ namespace CPKReaderWV
     public partial class Form1 : Form
     {
         public CPKReader cpk;
+        public helper help;
         public string tempapath;
 
         public Form1()
@@ -48,18 +49,20 @@ namespace CPKReaderWV
             listBox3.Items.Clear();
             int count = 0;
             foreach (KeyValuePair<uint, uint> pair in cpk.fileOffsets)
-                listBox3.Items.Add((count++) + ": Offset=0x" + pair.Key.ToString("X8") + " Size=0x" + pair.Value.ToString("X8"));
+                listBox3.Items.Add((count++) + ": Offset=0x" + pair.Key.ToString("X8") + " Size=" + pair.Value.ToString());
     
         }
 
         private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
+            help = new helper();
             int n = listBox3.SelectedIndex;
             if (n == -1) return;
             KeyValuePair<uint, uint> pair = cpk.fileOffsets.ToArray()[n];
             cpk.cpkpath = tempapath;
             FileStream fs = new FileStream(cpk.cpkpath, FileMode.Open, FileAccess.Read);
-            fs.Seek(pair.Key + 6, 0); 
+            fs.Seek(pair.Key, 0);
+            Console.WriteLine("DecompressedSize: "+ help.ReadU16(fs)+ " Flag: " + help.ReadU16(fs) + " CompressedSize: " + help.ReadU16(fs));
             byte[] buff = new byte[pair.Value];
             fs.Read(buff, 0, (int)pair.Value);
             fs.Close();
