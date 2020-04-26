@@ -23,7 +23,6 @@ namespace CPKReaderWV
     public enum CPKArchiveSizes
     {
         CPK_COMP_SECTOR_SIZE = 0x4000,
-        CPK_COMP_READ_CHUNK_SIZE = 0x4000,
         CPK_READ_SECTOR_SIZE = 0x10000,
         CPK_MAX_DECOMP_BUFFER_SIZE = 0x10000,
     }

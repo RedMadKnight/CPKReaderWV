@@ -73,8 +73,18 @@ namespace CPKReaderWV
                 ushort Size = help.ReadU16(s); 
                 ushort flag = help.ReadU16(s); 
                 ushort ComSectorSize = help.ReadU16(s);
-                if (ComSectorSize == 0)
-                    break;
+                    if (ComSectorSize == 0)
+                    {
+                        pos = next_sector;
+                        next_sector += 0x4000;
+                        s.Seek(pos, 0);
+                        sector++;
+                        Size = help.ReadU16(s);
+                        flag = help.ReadU16(s);
+                        ComSectorSize = help.ReadU16(s);
+                        if (next_sector > s.Length)
+                            break;
+                    }
                 fileOffsets.Add(pos, ComSectorSize);
                 s.Seek(ComSectorSize, SeekOrigin.Current);
             }
@@ -97,17 +107,7 @@ namespace CPKReaderWV
             header.CompSectorToDecomOffsetBitCount = help.ReadU32(s);
             header.DecompSectorToCompSectorBitCount = help.ReadU32(s);
             header.CRC = help.ReadU32(s);
-            cpkfile.CurrentReadOffset = help.ReadU32(s); //start at 0 offset
-            if (header.Flags == (uint)CPKArchive.CPK_FLAG_COMPRESSED)
-            {
-                cpkfile.HeaderSize = header.HeaderSector;
-                cpkfile.HeaderReadSectorCount = (header.HeaderSector + (uint)CPKArchiveSizes.CPK_READ_SECTOR_SIZE - 1) / (uint)CPKArchiveSizes.CPK_READ_SECTOR_SIZE;
-            }
-            else
-            {
-                cpkfile.HeaderSize = (uint)CPKArchiveSizes.CPK_READ_SECTOR_SIZE * header.HeaderSector;
-                cpkfile.HeaderReadSectorCount = header.HeaderSector;
-            }
+            cpkfile.CurrentReadOffset = help.ReadU32(s); 
             cpkfile.CompSectorCount = ((uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE + fileSize - 1 - (uint)CPKArchiveSizes.CPK_READ_SECTOR_SIZE * header.HeaderSector) / (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE;
 
         }
@@ -149,7 +149,8 @@ namespace CPKReaderWV
         {
             fileinfo = new CPKFile.FileInfo[header.FileCount];
             StringBuilder sb = new StringBuilder();
-            uint pos = 0; 
+            uint pos = 0;
+            ulong sect = 0;
             for (int i = 0; i < header.FileCount; i++)
             {
                 sb.Append((i).ToString("d6") + " : ");
@@ -226,11 +227,13 @@ namespace CPKReaderWV
 
         public void DecompressedSectorToCompressedSector(Stream s)
         {
+            Console.WriteLine(s.Position);
             uint size = help.GetHighestBit(cpkfile.CompSectorCount) * (((uint)header.DecompressedFileSize + (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE - 1) / (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE);
             size += 7;
             size /= 8;
             block4 = new byte[size];
             s.Read(block4, 0, (int)size);
+            Console.WriteLine(s.Position);
         }
 
 

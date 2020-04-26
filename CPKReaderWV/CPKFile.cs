@@ -39,12 +39,6 @@ namespace CPKReaderWV
             public uint nLocationIndexOverride;
         }
 
-        public struct Locations
-        {
-            public uint index;
-            public ulong offset;
-        }
-
         public string CPKFilePath;
         public HeaderStruct Header;
         public FileInfo[] HashTable;
@@ -87,7 +81,7 @@ namespace CPKReaderWV
         public void GetPackageVersion()
         {
             FileStream o = OpenCPKFile(CPKFilePath);
-            Header.MagicNumber = help.RUInt32(o, Reverse); //should skip to next, not read
+            o.Seek(4, 0); 
             Header.PackageVersion = help.RUInt32(o, Reverse);
             CloseCPKFile(o);
         }
@@ -144,7 +138,7 @@ namespace CPKReaderWV
         {
             FileInfo[] result = new FileInfo[Header.FileCount];
             FileStream o = OpenCPKFile(CPKFilePath);
-            o.Position = 64;
+            o.Position = CurrentReadOffset;
             byte[] Htable = ReadHashTable(o);
             uint position = 0;
             for(int i=0;i< Header.FileCount;i++ )
