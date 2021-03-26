@@ -3718,6 +3718,10 @@ namespace Be.Windows.Forms
         }
         #endregion
 
+        #region Test
+        /// <summary>
+        /// </summary>
         public System.Drawing.Font BoldFont { get => _boldFont; set => _boldFont = value; }
+        #endregion
     }
 }

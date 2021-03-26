@@ -16,6 +16,7 @@ namespace CPKReaderWV
         public uint fileSize;
         public CPKFile.HeaderStruct header;
         public CPKFile.FileInfo[] fileinfo;
+        public CPKFile.Locations[] location;
         public byte[] BFileInfo;
         public byte[] block2;
         public byte[] block3;
@@ -56,13 +57,16 @@ namespace CPKReaderWV
             fileOffsets = new Dictionary<uint, uint>();
             s.Seek(pos, 0);
             //skip first empty record
+            uint decsize = 0;
             help.ReadU16(s); help.ReadU16(s); s.Seek(help.ReadU16(s), SeekOrigin.Current);
             while (true)
             {
                 pos = (uint)s.Position;
                 if(pos+0xf > next_sector)
                     {
-                    Console.WriteLine("Sector : "+sector);
+                    Console.WriteLine("DecSize : " + decsize.ToString("X10"));
+                    Console.WriteLine("Sector : " + sector);
+                    Console.WriteLine("Position : " + pos.ToString("X10"));
                     pos = next_sector;
                     next_sector += 0x4000;
                     s.Seek(pos, 0);
@@ -75,16 +79,21 @@ namespace CPKReaderWV
                 ushort ComSectorSize = help.ReadU16(s);
                     if (ComSectorSize == 0)
                     {
-                        pos = next_sector;
+                    Console.WriteLine("DecSize : " + decsize.ToString("X10"));
+                    Console.WriteLine("Sector : " + sector);
+                    Console.WriteLine("Position : " + pos.ToString("X10"));
+                    pos = next_sector;
                         next_sector += 0x4000;
-                        s.Seek(pos, 0);
+                    if (next_sector > s.Length)
+                        break;
+                    s.Seek(pos, 0);
                         sector++;
                         Size = help.ReadU16(s);
                         flag = help.ReadU16(s);
                         ComSectorSize = help.ReadU16(s);
-                        if (next_sector > s.Length)
-                            break;
+
                     }
+                decsize += Size;
                 fileOffsets.Add(pos, ComSectorSize);
                 s.Seek(ComSectorSize, SeekOrigin.Current);
             }
@@ -150,7 +159,6 @@ namespace CPKReaderWV
             fileinfo = new CPKFile.FileInfo[header.FileCount];
             StringBuilder sb = new StringBuilder();
             uint pos = 0;
-            ulong sect = 0;
             for (int i = 0; i < header.FileCount; i++)
             {
                 sb.Append((i).ToString("d6") + " : ");
@@ -183,9 +191,11 @@ namespace CPKReaderWV
 
         public string Print_Locations()
         {
+
             uint[] index = new uint[header.LocationCount];
             ulong[] offset = new ulong[header.LocationCount];
             StringBuilder sb = new StringBuilder();
+            location = new CPKFile.Locations[header.LocationCount];
             uint pos = 0;
             sb.AppendLine("Locations sorted by offset!");
             sb.AppendLine("Index => Offset");
@@ -193,11 +203,22 @@ namespace CPKReaderWV
             {
                 offset[i] = help.ReadBits(block2, pos, header.LocationBitCount);
                 pos += header.LocationBitCount;
-                index[i] = (uint)i;
-            }
+                index[i] =(uint)i;
+            } 
             Array.Sort(offset, index);
             for (int i = 0; i < header.LocationCount; i++)
+            {
                 sb.AppendLine((index[i]).ToString("d4") + " : " + offset[i].ToString("X8"));
+                location[i].index = index[i];
+                location[i].offset = offset[i];
+                for (uint y = 0; y < fileinfo.Length; y++)
+                {
+                    //fileinfo[y].nLocationCount == 1
+                    if (fileinfo[y].nLocationIndex == location[i].index)
+                        location[i].file = y;
+                }
+              
+            }
             return sb.ToString();
         }
 

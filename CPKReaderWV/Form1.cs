@@ -44,8 +44,9 @@ namespace CPKReaderWV
             rtb5.Text = cpk.Print_FileNameArrayOffsets();
             listBox2.Items.Clear();
 
-            for(int x=0;x<cpk.header.FileCount;x++)
-                listBox2.Items.Add("Location index: "+(x).ToString("d6") + ": Hash : "+ cpk.fileHash[x] +" => "+ cpk.fileNames[x]);
+            for (int x = 0; x < cpk.location.Length; x++)
+                 listBox2.Items.Add("Location index: " + ((cpk.location[x].file)).ToString("d6") + ": Hash : " + cpk.fileHash[cpk.location[x].file] + " => " + cpk.fileNames[cpk.location[x].file]);
+
             listBox3.Items.Clear();
             int count = 0;
             foreach (KeyValuePair<uint, uint> pair in cpk.fileOffsets)

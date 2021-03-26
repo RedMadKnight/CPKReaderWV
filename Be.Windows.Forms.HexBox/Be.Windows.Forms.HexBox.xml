@@ -1409,6 +1409,10 @@
             </summary>
             <param name="e">An EventArgs that contains the event data.</param>
         </member>
+        <member name="P:Be.Windows.Forms.HexBox.BoldFont">
+            <summary>
+            </summary>
+        </member>
         <member name="T:Be.Windows.Forms.HexCasing">
             <summary>
             Specifies the case of hex characters in the HexBox control

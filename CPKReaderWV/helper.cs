@@ -292,13 +292,6 @@ namespace CPKReaderWV
             return Hash64(szFilename.ToLower());
         }
 
-        public bool FindArchiveContaining(string szFilename, CPKFile cpk)
-        {
-            CPKFile.FileInfo[] info = cpk.GetHashTable();
-            ulong hash = GetFileHash(szFilename); //or GetSubFileHash
-            return SearchHashInArchive(hash, info);
-        }
-
         public bool SearchHashInArchive(ulong dwHash, CPKFile.FileInfo[] ptFileInfo)
         {
             bool result = false;
@@ -312,6 +305,6 @@ namespace CPKReaderWV
             }
             return result; 
         }
-                
+
     }
 }
