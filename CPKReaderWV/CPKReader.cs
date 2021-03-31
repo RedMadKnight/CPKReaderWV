@@ -49,53 +49,28 @@ namespace CPKReaderWV
 
         public void ReadSectors(Stream s)
         {
-            uint pos = (uint)s.Position & 0xFFFF0000;
-            if ((s.Position % 0x10000) != 0)
-               pos += 0x10000;
-            uint sector = 1;
-            uint next_sector = pos+0x4000;
+            uint FirstSectorPosition = (header.ReadSectorSize * header.HeaderSector) & 0xFFFF0000;
+            if ((FirstSectorPosition % header.ReadSectorSize) != 0)
+                FirstSectorPosition += header.ReadSectorSize;
             fileOffsets = new Dictionary<uint, uint>();
-            s.Seek(pos, 0);
-            //skip first empty record
-            uint decsize = 0;
-            help.ReadU16(s); help.ReadU16(s); s.Seek(help.ReadU16(s), SeekOrigin.Current);
-            while (true)
-            {
-                pos = (uint)s.Position;
-                if(pos+0xf > next_sector)
-                    {
-                    Console.WriteLine("DecSize : " + decsize.ToString("X10"));
-                    Console.WriteLine("Sector : " + sector);
-                    Console.WriteLine("Position : " + pos.ToString("X10"));
-                    pos = next_sector;
-                    next_sector += 0x4000;
-                    s.Seek(pos, 0);
-                    sector++;
-                    if (next_sector > s.Length)
-                        break;
-                }
-                ushort Size = help.ReadU16(s); 
-                ushort flag = help.ReadU16(s); 
-                ushort ComSectorSize = help.ReadU16(s);
-                    if (ComSectorSize == 0)
-                    {
-                    Console.WriteLine("DecSize : " + decsize.ToString("X10"));
-                    Console.WriteLine("Sector : " + sector);
-                    Console.WriteLine("Position : " + pos.ToString("X10"));
-                    pos = next_sector;
-                        next_sector += 0x4000;
-                    if (next_sector > s.Length)
-                        break;
-                    s.Seek(pos, 0);
-                        sector++;
-                        Size = help.ReadU16(s);
-                        flag = help.ReadU16(s);
-                        ComSectorSize = help.ReadU16(s);
+            s.Seek(FirstSectorPosition, 0);
 
-                    }
-                decsize += Size;
-                fileOffsets.Add(pos, ComSectorSize);
-                s.Seek(ComSectorSize, SeekOrigin.Current);
+            for (uint sector = 0; sector <= cpkfile.CompSectorCount; sector++)
+            {
+                uint SectorStartPosition = (uint)(FirstSectorPosition + sector * header.CompSectorSize);
+                uint NextSectorPosition = (uint)(SectorStartPosition + header.CompSectorSize);
+                s.Seek(SectorStartPosition, 0);
+                while (s.Position + 0xf < NextSectorPosition)
+                {
+                    uint pos = (uint)s.Position;
+                    ushort Size = help.ReadU16(s);
+                    ushort flag = help.ReadU16(s);
+                    ushort CompChunkSize = help.ReadU16(s);
+                    
+                    if (CompChunkSize == 0) continue;
+                    fileOffsets.Add(pos, CompChunkSize);
+                    s.Seek(CompChunkSize, SeekOrigin.Current);
+                }
             }
         }
 
@@ -116,9 +91,10 @@ namespace CPKReaderWV
             header.CompSectorToDecomOffsetBitCount = help.ReadU32(s);
             header.DecompSectorToCompSectorBitCount = help.ReadU32(s);
             header.CRC = help.ReadU32(s);
+            header.CompSectorSize = (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE;
+            header.ReadSectorSize = (uint)CPKArchiveSizes.CPK_READ_SECTOR_SIZE;
             cpkfile.CurrentReadOffset = help.ReadU32(s); 
-            cpkfile.CompSectorCount = ((uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE + fileSize - 1 - (uint)CPKArchiveSizes.CPK_READ_SECTOR_SIZE * header.HeaderSector) / (uint)CPKArchiveSizes.CPK_COMP_SECTOR_SIZE;
-
+            cpkfile.CompSectorCount = (header.CompSectorSize + fileSize - 1 - header.ReadSectorSize * header.HeaderSector) / header.CompSectorSize;
         }
 
         public string PrintHeader()
@@ -137,7 +113,7 @@ namespace CPKReaderWV
             sb.AppendLine("LocationBitCount : " + header.LocationBitCount.ToString());
             sb.AppendLine("CompSectorToDecomOffsetBitCount : " + header.CompSectorToDecomOffsetBitCount.ToString());
             sb.AppendLine("DecompSectorToCompSectorBitCount : " + header.DecompSectorToCompSectorBitCount.ToString());
-            sb.AppendLine("CRC : " + header.CRC.ToString(""));
+            sb.AppendLine("CRC : " + header.CRC.ToString("")); 
             return sb.ToString();
         }
 
@@ -213,7 +189,6 @@ namespace CPKReaderWV
                 location[i].offset = offset[i];
                 for (uint y = 0; y < fileinfo.Length; y++)
                 {
-                    //fileinfo[y].nLocationCount == 1
                     if (fileinfo[y].nLocationIndex == location[i].index)
                         location[i].file = y;
                 }

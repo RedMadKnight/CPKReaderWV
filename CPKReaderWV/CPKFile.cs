@@ -26,9 +26,9 @@ namespace CPKReaderWV
             public uint DecompSectorToCompSectorBitCount;
             public uint CRC;
             public uint Unknown;
-            public int ReadSectorSize;
-            public int CompSectorSize;
-
+            public uint ReadSectorSize;
+            public uint CompSectorSize;
+            
         }
         public struct FileInfo 
         {
@@ -56,6 +56,6 @@ namespace CPKReaderWV
         public uint HeaderSize;
         public uint HeaderReadSectorCount;
         public uint CompSectorCount;
-
+        public uint FirstSectorPosition;
     }
 }
