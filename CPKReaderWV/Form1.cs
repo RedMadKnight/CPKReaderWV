@@ -43,10 +43,12 @@ namespace CPKReaderWV
             rbtd.Text = cpk.Print_DecompressedSectorToCompressedSector();
             rtb5.Text = cpk.Print_FileNameArrayOffsets();
             listBox2.Items.Clear();
-
             for (int x = 0; x < cpk.location.Length; x++)
-                 listBox2.Items.Add("Location index: " + ((cpk.location[x].file)).ToString("d6") + ": Hash : " + cpk.fileHash[cpk.location[x].file] + " => " + cpk.fileNames[cpk.location[x].file]);
-
+            {
+                int i = (int)cpk.location[x].index;
+                int a = GetLocationIndex(i);
+                listBox2.Items.Add("Location index: " + ((cpk.location[x].file)).ToString("d6") + ": Hash : " + cpk.fileHash[a] + " => " + cpk.fileNames[a]);
+            }
             listBox3.Items.Clear();
             int count = 0;
             foreach (KeyValuePair<uint, uint> pair in cpk.fileOffsets)
@@ -99,5 +101,26 @@ namespace CPKReaderWV
         {
             Close();
         }
+
+
+        public int GetLocationIndex(int i)
+        {
+            int a = -1;
+            int tmp = i;
+            {
+                for (a = 0; a < cpk.fileinfo.Length; a++)
+                {
+                    tmp = i;
+                    for (uint b = 0; b < cpk.fileinfo[a].nLocationCount; b++)
+                    {
+                        if (cpk.fileinfo[a].nLocationIndex == tmp)
+                            return a;
+                        tmp--;
+                    }
+                }
+            }
+            return a;
+        }
+
     }
 }
